@@ -27,7 +27,7 @@ VERILOG_SOURCES += $(PWD)/tb.v $(PWD)/gate_level_netlist.v
 endif
 
 # TOPLEVEL is the name of the toplevel module in your Verilog or VHDL file
-TOPLEVEL = tb
+TOPLEVEL = tt_um_dishbrain_hugoladret
 
 # MODULE is the basename of the Python test file
 MODULE = test
