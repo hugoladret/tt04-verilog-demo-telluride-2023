@@ -7,7 +7,7 @@ project:
 # Source files must be in ./src and you must list each source file separately
   source_files:        
     - decoder.v
-  top_module:  "tt_um_neuron"      # put the name of your top module here, make it unique by prepending your github username
+  top_module:  "hugoladret_tt_um_dishbrain"      # put the name of your top module here, make it unique by prepending your github username
 
 # How many tiles your design occupies? A single tile is about 167x108 uM.
 # Before changing this, please reach out to us on discord to discuss your design.
@@ -21,57 +21,51 @@ yaml_version: 4
 #
 # Here is a great example: https://github.com/davidsiaw/tt02-davidsiaw-stackcalc/blob/38c5647f83aad2aec675d566aa3d67b98f0aac81/info.yaml
 documentation: 
-  author:       "Jason"
-  title:        "LIF Neuron"
+  author:       "Hugo Ladret"
+  title:        "LIF Neuron plays Pong better than a multi-million dollar startup's dish"
   language:     "Verilog"
-  description:  "Implement a leaky integrate and fire neuron."
+  description:  "Implement a leaky integrate and fire neuron playing pong."
 
 # Longer description of how the project works. You can use standard markdown format.
   how_it_works: |
-      Uses a set of registers to divide the clock, and then some combinational logic
-      to convert from binary to decimal for the display.
+      A hardware-based Pong game implemented using Verilog, featuring a Leaky Integrate-and-Fire (LIF) neuron model for paddle control.
+      The LIF neuron reacts to the y-coordinate of the Pong ball, driving the paddle to follow the ball's trajectory.
+      The project includes a comprehensive test suite written in Python with cocotb for verification of the design.
 
-      Puts the bottom 8 bits of the counter on the bidirectional outputs.
 
 # Instructions on how someone could test your project, include things like what buttons do what and how to set the clock if needed
   how_to_test:  |
-      After reset, the counter should increase by one every second with a 10MHz input clock.
+      execute python3 -m cocotb.run -m testsuite in your terminal after setting up the cocotb testing environment
+      and compiling the design with your preferred Verilog simulator
 
 # A description of what the inputs do (e.g. red button, SPI CLK, SPI MOSI, etc).
   inputs:               
-    - none
-    - none
-    - none
-    - none
-    - none
-    - none
-    - none
-    - none
+    - ui_in[5:0]: 6-bit input for the y-coordinate of the Pong ball.
+    - ena: When this input is high, the design is enabled.
+    - clk: The clock signal for the design.
+    - rst_n: When this input is low, the design is reset.
 # A description of what the outputs do (e.g. status LED, SPI MISO, etc)
   outputs:
-    - segment a
-    - segment b
-    - segment c
-    - segment d
-    - segment e
-    - segment f
-    - segment g
-    - dot
+    - uo_out[0]: Indicates a spike event in the LIF neuron.
+    - uo_out[1:6]: Represents the current state of the LIF neuron which corresponds to the y-coordinate of the paddle.
+    - uo_out[7]: Unused.
+    - uio_oe: Active high signal to set bidirectional I/O as output (1 = output, 0 = input).
 # A description of what the bidirectional I/O pins do (e.g. I2C SDA, I2C SCL, etc)
   bidirectional:
-    - second counter bit 0
-    - second counter bit 1
-    - second counter bit 2
-    - second counter bit 3
-    - second counter bit 4
-    - second counter bit 5
-    - second counter bit 6
-    - second counter bit 7
+    - uio_in[0]: Input signal for the second counter bit 0.
+    - uio_in[1]: Input signal for the second counter bit 1.
+    - uio_in[2]: Input signal for the second counter bit 2.
+    - uio_in[3]: Input signal for the second counter bit 3.
+    - uio_in[4]: Input signal for the second counter bit 4.
+    - uio_in[5]: Input signal for the second counter bit 5.
+    - uio_in[6]: Input signal for the second counter bit 6.
+    - uio_in[7]: Input signal for the second counter bit 7.
+    - uio_out: Outputs the same value as uio_in when uio_oe is high.
 
 # The following fields are optional
-  tag:          "timer, test"      # comma separated list of tags: test, encryption, experiment, clock, animation, utility, industrial, pwm, fpga, alu, microprocessor, risc, riscv, sensor, signal generator, fft, filter, music, bcd, sound, serial, timer, random number generator, calculator, decoder, counter, puzzle, multiplier, game, oscillator,
+  tag:          "timer, test, game, experiment"      # comma separated list of tags: test, encryption, experiment, clock, animation, utility, industrial, pwm, fpga, alu, microprocessor, risc, riscv, sensor, signal generator, fft, filter, music, bcd, sound, serial, timer, random number generator, calculator, decoder, counter, puzzle, multiplier, game, oscillator,
   external_hw:  ""      # Describe any external hardware needed
-  discord:      "jasnn"      # Your discord handle, used for communication and automatically assigning tapeout role after a submission
+  discord:      "hugoladret"      # Your discord handle, used for communication and automatically assigning tapeout role after a submission
   doc_link:     ""      # URL to longer form documentation, eg the README.md in your repository
   clock_hz:     10000000       # Clock frequency in Hz (if required)
   picture:      ""      # relative path to a picture in your repository
