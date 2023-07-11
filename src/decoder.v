@@ -16,7 +16,7 @@ module tt_um_dishbrain_hugoladret (
 
     assign in_current = ui_in[5:0];
     assign uo_out[0] = spike;
-    assign uo_out[1:6] = state;
+    assign uo_out[6:1] = state;
 
     reg  [5:0] threshold; 
     wire [5:0] state_hist; 
