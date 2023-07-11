@@ -1,5 +1,6 @@
-
-module tt_um_neuron (
+module tt_um_dishbrain (
+    // These are the inputs and outputs to/from the module.
+    // It's still better than the actual thing lol 
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
     output wire [7:0] uo_out,   // Dedicated outputs - connected to the 7 segment display
     input  wire [7:0] uio_in,   // IOs: Bidirectional Input path
@@ -8,89 +9,43 @@ module tt_um_neuron (
     input  wire       ena,      // will go high when the design is enabled
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
-
 );
 
+    // Assign the lower 6 bits of the input ui_in to the in_current wire, this represents the pong ball's y-coordinate
     assign in_current = ui_in[5:0];
+
+    // The spike output (uo_out[0]) indicates when the neuron fires a spike.
     assign uo_out[0] = spike;
+
+    // The state of the neuron (uo_out[1:6]) represents the y-coordinate of the paddle
     assign uo_out[1:6] = state;
 
-    reg  [5:0] threshold;
-    wire [5:0] state_hist;
-    wire reset = ! rst_n;
+    reg  [5:0] threshold; // Threshold value which decides when the neuron should spike
+    wire [5:0] state_hist; // The history of the neuron's state
+    wire reset = ! rst_n;  // Reset signal. When high, the neuron's state, threshold and spike status will be reset
 
+    // Calculate the new state of the neuron based on the current input and state
     assign state_hist = in_current + (spike ? 0 : (state >> 1)); // scale by 1/2
 
-
-    // to-do: check for overflow
+    // This always block describes what happens on each clock cycle
     always @(posedge clk) begin
+        // If reset signal is received, reset the neuron's state, threshold and spike status to initial values
         if (reset) begin
-            threshold <= 32;
-            state <= 0;
-            spike <= 0;
+            threshold <= 32; // Initial threshold value, half of the 6 bits range defined here
+            state <= 0; // Initial state
+            spike <= 0; // Initial spike status
         end else begin
+            // The threshold is now set to the y-coordinate of the ball
+            threshold <= in_current;
+
+            // Update the neuron's state to the newly calculated state
             state <= state_hist;
+
+            // If the neuron's state exceeds the threshold (paddle's y-coordinate is below the ball's y-coordinate), it will fire a spike
             spike <= (state >= threshold);
 
+            // If the neuron does not fire a spike (paddle's y-coordinate is above the ball's y-coordinate) and the state is above 0, decrement the state by 1 to move the paddle downwards
+            if (!spike && state > 0) state <= state - 1;
         end
     end
-
 endmodule
-
-// module lif (
-//     input wire [5:0] in_current, // 4-b Current input
-//     input wire       clk, // clock
-//     input wire       rst_n, // reset_n - low to reset
-//     output reg [6:0] out_state,
-//     output reg       out_spike
-// );
-
-//     wire reset = ! rst_n;
-
-//     parameter THRESHOLD = 7'b100000
-//     parameter LEAK_RATE = 7'b000001
-    
-
-    
-//     always @(posedge clk) begin
-//         // if reset, set state to 0
-//         if (reset) begin
-//             out_state <= 0;
-//         end else begin
-//             if (out_spike > THRESHOLD) begin
-//                 out_state <= 0;
-//                 out_spike <= 1;
-//             end else
-//                 out_state <= out_state - LEAK_RATE
-//                 out_spike <= 0;
-
-//     end
-
-// endmodule
-
-
-// module seg7 (
-//     input wire [3:0] counter,
-//     output reg [6:0] segments
-// );
-
-//     always @(*) begin
-//         case(counter)
-//             //                7654321
-//             0:  segments = 7'b0111111;
-//             1:  segments = 7'b0000110;
-//             2:  segments = 7'b1011011;
-//             3:  segments = 7'b1001111;
-//             4:  segments = 7'b1100110;
-//             5:  segments = 7'b1101101;
-//             6:  segments = 7'b1111100;
-//             7:  segments = 7'b0000111;
-//             8:  segments = 7'b1111111;
-//             9:  segments = 7'b1100111;
-//             default:    
-//                 segments = 7'b0000000;
-//         endcase
-//     end
-
-// endmodule
-
