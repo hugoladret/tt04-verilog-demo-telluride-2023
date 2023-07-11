@@ -1,4 +1,4 @@
-module hugoladret_tt_um_dishbrain (
+module tt_um_dishbrain_hugoladret (
     // These are the inputs and outputs to/from the module.
     // It's still better than the actual thing lol 
     input  wire [7:0] ui_in,    // Dedicated inputs - connected to the input switches
