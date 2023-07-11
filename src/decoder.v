@@ -34,7 +34,7 @@ module tt_um_dishbrain_hugoladret (
 
             // Assignments to uo_out bits. It's required since uo_out is now declared as a register
             uo_out[0] <= spike;
-            uo_out[1:6] <= state;
+            uo_out[6:1] <= state;
             uo_out[7] <= 0;  // Assuming the highest bit is unused
         end
     end
